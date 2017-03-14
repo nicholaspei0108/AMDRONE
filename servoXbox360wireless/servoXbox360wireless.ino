@@ -68,6 +68,7 @@ int s1 = SERVO1_INIT;
 int s2 = SERVO2_INIT;
 int s3 = SERVO3_INIT;
 int s4 = SERVO4_INIT;
+bool buttonlock = false;
 
 
 //=======================Setup========================//
@@ -107,34 +108,34 @@ void loop() {
 
         //Start of timed
         
-        if(Xbox.getButtonClick(L2,i)){
+        if(Xbox.getButtonClick(L2,i) && !buttonlock){
           s1 = s1 + SERVO1_STEP*SERVO1_DIRECTION;
           Serial.print("L2: ");
         }
-        else if(Xbox.getButtonClick(R2,i)){
+        else if(Xbox.getButtonClick(R2,i) && !buttonlock){
           s1 = s1 - SERVO1_STEP*SERVO1_DIRECTION;
         }
           if(s1 > SERVO1_MAX) s1 = SERVO1_MAX;
           if(s1 < SERVO1_MIN) s1 = SERVO1_MIN;
         
-        if(Xbox.getAnalogHat(LeftHatY,i) > STICK_CENTER + DEADZONE 
-          || Xbox.getAnalogHat(LeftHatY,i) < STICK_CENTER - DEADZONE){
+        if((Xbox.getAnalogHat(LeftHatY,i) > STICK_CENTER + DEADZONE 
+          || Xbox.getAnalogHat(LeftHatY,i) < STICK_CENTER - DEADZONE)) && !buttonlock{
             s2 = s2 + (Xbox.getAnalogHat(LeftHatY,i) - STICK_CENTER)*SERVO2_RATE*SERVO2_DIRECTION;
           }
           if(s2 > SERVO2_MAX) s2 = SERVO2_MAX;
           if(s2 < SERVO2_MIN) s2 = SERVO2_MIN;
         
-        if(Xbox.getAnalogHat(RightHatY,i) > STICK_CENTER + DEADZONE
-          || Xbox.getAnalogHat(RightHatY,i) < STICK_CENTER - DEADZONE){
+        if((Xbox.getAnalogHat(RightHatY,i) > STICK_CENTER + DEADZONE
+          || Xbox.getAnalogHat(RightHatY,i) < STICK_CENTER - DEADZONE)) && !buttonlock{
             s3 = s3 + (Xbox.getAnalogHat(RightHatY,i) - STICK_CENTER)*SERVO3_RATE*SERVO3_DIRECTION;
           }
           if(s3 > SERVO3_MAX) s3 = SERVO3_MAX;
           if(s3 < SERVO3_MIN) s3 = SERVO3_MIN;
 
-        if(Xbox.getButtonClick(LEFT,i)){
+        if(Xbox.getButtonClick(LEFT,i) && !buttonlock){
           s4 = s4 + SERVO4_STEP*SERVO4_DIRECTION;
         }
-        else if(Xbox.getButtonClick(RIGHT,i)){
+        else if(Xbox.getButtonClick(RIGHT,i) && !buttonlock){
           s4 = s4 - SERVO4_STEP*SERVO4_DIRECTION;
         }
           if(s4 > SERVO4_MAX) s4 = SERVO4_MAX;
@@ -152,23 +153,26 @@ void loop() {
 
         // Safety Release
         // Detaches all servos - waiting for button to re-engage
-        if(Xbox.getButtonClick(B,i)){
+        if(Xbox.getButtonClick(B,i) && !buttonlock){
+          buttonlock = true;
           Serial.print("B ");
           servo1.detach();
           servo2.detach();
           servo3.detach();
           servo4.detach();
+          
         }
         
         //Safety Restore
         //Also : Initializing Button : creative way to start robot
-//        if(Xbox.getButtonClick(A,i)){
-//          Serial.print("A ");
-//          servo1.attach(2);
-//          servo2.attach(3);
-//          servo3.attach(4);
-//          servo4.attach(5);
-//        }
+        if(Xbox.getButtonClick(A,i) && buttonlock){
+          buttonlock = false;
+          Serial.print("A ");
+          servo1.attach(2);
+          servo2.attach(3);
+          servo3.attach(4);
+          servo4.attach(5);
+        }
 
         //Reset ALL Servos to initial positions when "start" button is pressed
         if(Xbox.getButtonClick(START,i)){
