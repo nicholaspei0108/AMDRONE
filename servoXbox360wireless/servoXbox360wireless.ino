@@ -12,12 +12,6 @@
 
 #define LOOPTIME 25 //Define the delay between timed loop cycles
 
-//Define where each servo is attached//
-//#define SERVO1 2 // Left/Right Trigger : Base Joint
-//#define SERVO2 3 // LeftHat            : Up&Down
-//#define SERVO3 4 // RightHat           : Forward&Backward
-//#define SERVO4 5 // Left/Right D-pad   : Claw
-
 //Define initial servo position(initial Condition); (initiates when "start" button pressed).
 #define SERVO1_INIT 90
 #define SERVO2_INIT 90
@@ -84,10 +78,10 @@ void setup() {
   }
   Serial.print(F("\r\nXbox Wireless Receiver Initiated"));
   
-  servo1.attach(2);
-  servo2.attach(3);
-  servo3.attach(4);
-  servo4.attach(5);
+  servo1.attach(2); //Left/Right Trigger : Base Joint
+  servo2.attach(3); // LeftHat            : Up&Down
+  servo3.attach(4); // RightHat           : Forward&Backward
+  servo4.attach(5); // Left/Right D-pad   : Claw
   
   //Initially All Servos Disabled
   servo1.detach();
@@ -140,16 +134,6 @@ void loop() {
         }
           if(s4 > SERVO4_MAX) s4 = SERVO4_MAX;
           if(s4 < SERVO4_MIN) s4 = SERVO4_MIN;
-        
-        //Debug information about servo positions. Uncomment when you are determining servo limits.
-//        Serial.print("  s1 = ");  
-//        Serial.print(s1);
-//        Serial.print("  s2 = ");
-//        Serial.print(s2);
-//        Serial.print("  s3 = ");
-//        Serial.print(s3);
-//        Serial.print("  s4 = ");
-//        Serial.print(s4);
 
         // Safety Release
         // Detaches all servos - waiting for button to re-engage
